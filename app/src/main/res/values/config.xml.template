@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- These values available from: https://www.strava.com/settings/api -->
+    <string name="strava_client_id">YOUR CLIENT ID HERE</string>
+    <string name="strava_client_secret">YOUR CLIENT SECRET HERE</string>
+</resources>
+

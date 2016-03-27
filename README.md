@@ -6,6 +6,14 @@ A shell for building Android apps with Strava authentication.
 ![https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg](https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg)
 
 
+Setup
+=====
+
+Create a config file and fill in your Strava `client id` and `client secret`:
+
+    $ cp app/src/main/res/values/config.xml.template app/src/main/res/values/config.xml
+
+
 Attribution
 ===========
 
