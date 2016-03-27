@@ -36,7 +36,7 @@ By Source (WP:NFCC#4), Fair use, https://en.wikipedia.org/w/index.php?curid=4824
 Resources
 =========
 
-- https://github.com/wuman/android-oauth-client
-- http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client"
-- http://strava.github.io/api/v3/oauth/
-- https://www.strava.com/settings/api
+- [https://github.com/wuman/android-oauth-client](https://github.com/wuman/android-oauth-client)
+- [http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client"](http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client")
+- [http://strava.github.io/api/v3/oauth/](http://strava.github.io/api/v3/oauth/)
+- [https://www.strava.com/settings/api](https://www.strava.com/settings/api)
