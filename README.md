@@ -14,7 +14,7 @@ Setup
 
 Create a config file and fill in your Strava `client id` and `client secret`:
 
-    $ cp app/src/main/res/values/config.xml.template app/src/main/res/values/config.xml
+    $ cp config.xml.template app/src/main/res/values/config.xml
 
 
 Attribution

@@ -1,6 +1,7 @@
 package com.samsandberg.stravaauthenticator;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -39,6 +40,8 @@ import java.util.logging.Logger;
 
 public class AuthenticateActivity extends FragmentActivity {
     private static final Logger LOGGER = Logger.getLogger(StravaConstants.TAG);
+
+    public static final String EXTRA_ACCESS_TOKEN = "access_token";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +223,12 @@ public class AuthenticateActivity extends FragmentActivity {
             }
             getActivity().setProgressBarIndeterminateVisibility(false);
             button.setEnabled(true);
+
+            if (result.success) {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra(EXTRA_ACCESS_TOKEN, result.data.getAccessToken());
+                startActivity(intent);
+            }
         }
 
         @Override
