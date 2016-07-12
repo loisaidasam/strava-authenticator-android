@@ -10,14 +10,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,8 +46,8 @@ public class AuthenticateActivity extends FragmentActivity {
         FragmentManager fm = getSupportFragmentManager();
 
         if (fm.findFragmentById(android.R.id.content) == null) {
-            OAuthFragment list = new OAuthFragment();
-            fm.beginTransaction().add(android.R.id.content, list).commit();
+            OAuthFragment fragment = new OAuthFragment();
+            fm.beginTransaction().add(android.R.id.content, fragment).commit();
         }
     }
 
@@ -76,29 +71,29 @@ public class AuthenticateActivity extends FragmentActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setHasOptionsMenu(true);
+//            setHasOptionsMenu(true);
         }
 
-        @Override
-        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-            super.onCreateOptionsMenu(menu, inflater);
-            inflater.inflate(R.menu.delete_cookies_menu, menu);
-        }
+//        @Override
+//        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//            super.onCreateOptionsMenu(menu, inflater);
+//            inflater.inflate(R.menu.delete_cookies_menu, menu);
+//        }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.delete_cookies: {
-                    CookieSyncManager.createInstance(getActivity());
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    cookieManager.removeAllCookie();
-                    return true;
-                }
-                default: {
-                    return super.onOptionsItemSelected(item);
-                }
-            }
-        }
+//        @Override
+//        public boolean onOptionsItemSelected(MenuItem item) {
+//            switch (item.getItemId()) {
+//                case R.id.delete_cookies: {
+//                    CookieSyncManager.createInstance(getActivity());
+//                    CookieManager cookieManager = CookieManager.getInstance();
+//                    cookieManager.removeAllCookie();
+//                    return true;
+//                }
+//                default: {
+//                    return super.onOptionsItemSelected(item);
+//                }
+//            }
+//        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -109,12 +104,12 @@ public class AuthenticateActivity extends FragmentActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             button = (Button) view.findViewById(android.R.id.button1);
-            setButtonText(R.string.get_token);
+            setButtonText(R.string.button_login);
             message = (TextView) view.findViewById(android.R.id.text1);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (v.getTag().equals(R.string.get_token)) {
+                    if (v.getTag().equals(R.string.button_login)) {
                         if (getLoaderManager().getLoader(LOADER_GET_TOKEN) == null) {
                             getLoaderManager().initLoader(LOADER_GET_TOKEN, null,
                                     OAuthFragment.this);
@@ -213,10 +208,10 @@ public class AuthenticateActivity extends FragmentActivity {
                 if (loader.getId() == LOADER_GET_TOKEN) {
                     setButtonText(R.string.delete_token);
                 } else {
-                    setButtonText(R.string.get_token);
+                    setButtonText(R.string.button_login);
                 }
             } else {
-                setButtonText(R.string.get_token);
+                setButtonText(R.string.button_login);
                 //Crouton.makeText(getActivity(), result.errorMessage, Style.ALERT).show();
                 // Toast instead of Crouton dependency
                 Toast.makeText(getActivity(), result.errorMessage, Toast.LENGTH_SHORT).show();
