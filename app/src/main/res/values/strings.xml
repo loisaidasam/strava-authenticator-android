@@ -3,10 +3,5 @@
 
     <string name="action_settings">Settings</string>
 
-    <string name="delete_cookies">Delete cookies</string>
-    <string name="delete_token">Delete Token</string>
-
     <string name="button_login">Login with Strava</string>
-
-    <string name="token_strava">strava</string>
 </resources>

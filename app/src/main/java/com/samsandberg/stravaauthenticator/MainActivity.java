@@ -1,5 +1,6 @@
 package com.samsandberg.stravaauthenticator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -12,7 +13,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         TextView tv = (TextView) findViewById(R.id.tv_access_token);
-        String accessToken = savedInstanceState.getString(AuthenticateActivity.EXTRA_ACCESS_TOKEN);
+        Intent intent = getIntent();
+        String accessToken = intent.getStringExtra(AuthenticateActivity.EXTRA_ACCESS_TOKEN);
         tv.setText(accessToken);
     }
 }

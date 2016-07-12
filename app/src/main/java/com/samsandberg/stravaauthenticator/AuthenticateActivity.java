@@ -2,6 +2,7 @@ package com.samsandberg.stravaauthenticator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -43,6 +43,11 @@ public class AuthenticateActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
 
+        if (handleCachedToken()) {
+            // If cached token handled, exit early
+            return;
+        }
+
         FragmentManager fm = getSupportFragmentManager();
 
         if (fm.findFragmentById(android.R.id.content) == null) {
@@ -57,43 +62,88 @@ public class AuthenticateActivity extends FragmentActivity {
         super.onDestroy();
     }
 
+    /**
+     * Lookup cached token if necessary, check it if necessary, start MainActivity if all good.
+     * Return whether MainActivity started
+     *
+     * @return
+     */
+    private boolean handleCachedToken() {
+        if (! do_use_cache()) {
+            return false;
+        }
+        String token = getCachedAccessToken();
+        if (token == null) {
+            return false;
+        }
+        if (do_check_token() && ! checkToken(token)) {
+            Toast.makeText(this, "Invalid token! TODO: Something!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        startMainActivity(token);
+        return true;
+    }
+
+    /**
+     * Should we use the local cache?
+     * @return
+     */
+    private boolean do_use_cache() {
+        return Boolean.valueOf(getString(R.string.strava_auth_use_cache));
+    }
+
+    /**
+     * Should we check a token (against Strava's API) or should we just assume it's good?
+     * @return
+     */
+    private boolean do_check_token() {
+        return Boolean.valueOf(getString(R.string.strava_auth_check_token));
+    }
+
+    private String getCachedAccessToken() {
+        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+        return preferences.getString(StravaConstants.PREFS_KEY_ACCESS_TOKEN, null);
+    }
+
+    private void setCachedAccessToken(String token) {
+        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(StravaConstants.PREFS_KEY_ACCESS_TOKEN, token);
+        editor.commit();
+    }
+
+    /**
+     * Actually check access token - maybe call some strava method with it?
+     *
+     * @param token
+     * @return
+     */
+    private boolean checkToken(String token) {
+        // TODO: Implement this!
+        return true;
+    }
+
+    private void startMainActivity(String token) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(EXTRA_ACCESS_TOKEN, token);
+        startActivity(intent);
+        finish();
+    }
+
     public static class OAuthFragment extends Fragment implements
             LoaderManager.LoaderCallbacks<AsyncResourceLoader.Result<Credential>> {
 
         private static final int LOADER_GET_TOKEN = 0;
-        private static final int LOADER_DELETE_TOKEN = 1;
 
         private OAuthManager oauth;
 
         private Button button;
-        private TextView message;
+        //private TextView message;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-//            setHasOptionsMenu(true);
         }
-
-//        @Override
-//        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//            super.onCreateOptionsMenu(menu, inflater);
-//            inflater.inflate(R.menu.delete_cookies_menu, menu);
-//        }
-
-//        @Override
-//        public boolean onOptionsItemSelected(MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.delete_cookies: {
-//                    CookieSyncManager.createInstance(getActivity());
-//                    CookieManager cookieManager = CookieManager.getInstance();
-//                    cookieManager.removeAllCookie();
-//                    return true;
-//                }
-//                default: {
-//                    return super.onOptionsItemSelected(item);
-//                }
-//            }
-//        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,26 +155,15 @@ public class AuthenticateActivity extends FragmentActivity {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             button = (Button) view.findViewById(android.R.id.button1);
             setButtonText(R.string.button_login);
-            message = (TextView) view.findViewById(android.R.id.text1);
+            //message = (TextView) view.findViewById(android.R.id.text1);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (v.getTag().equals(R.string.button_login)) {
-                        if (getLoaderManager().getLoader(LOADER_GET_TOKEN) == null) {
-                            getLoaderManager().initLoader(LOADER_GET_TOKEN, null,
-                                    OAuthFragment.this);
-                        } else {
-                            getLoaderManager().restartLoader(LOADER_GET_TOKEN, null,
-                                    OAuthFragment.this);
-                        }
-                    } else { // R.string.delete_token
-                        if (getLoaderManager().getLoader(LOADER_DELETE_TOKEN) == null) {
-                            getLoaderManager().initLoader(LOADER_DELETE_TOKEN, null,
-                                    OAuthFragment.this);
-                        } else {
-                            getLoaderManager().restartLoader(LOADER_DELETE_TOKEN, null,
-                                    OAuthFragment.this);
-                        }
+                    if (getLoaderManager().getLoader(LOADER_GET_TOKEN) == null) {
+                        getLoaderManager().initLoader(LOADER_GET_TOKEN, null, OAuthFragment.this);
+                    } else {
+                        getLoaderManager().restartLoader(LOADER_GET_TOKEN, null,
+                                OAuthFragment.this);
                     }
                 }
             });
@@ -133,6 +172,10 @@ public class AuthenticateActivity extends FragmentActivity {
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
+            setupOauth();
+        }
+
+        private void setupOauth() {
             boolean fullScreen = true;
             String clientId = getString(R.string.strava_client_id);
             String clientSecret = getString(R.string.strava_client_secret);
@@ -188,47 +231,39 @@ public class AuthenticateActivity extends FragmentActivity {
         public Loader<AsyncResourceLoader.Result<Credential>> onCreateLoader(int id, Bundle args) {
             getActivity().setProgressBarIndeterminateVisibility(true);
             button.setEnabled(false);
-            message.setText("");
-            if (id == LOADER_GET_TOKEN) {
-                return new GetTokenLoader(getActivity(), oauth);
-            } else {
-                return new DeleteTokenLoader(getActivity(), oauth);
-            }
+            //message.setText("");
+            return new GetTokenLoader(getActivity(), oauth);
         }
 
         @Override
         public void onLoadFinished(Loader<AsyncResourceLoader.Result<Credential>> loader,
                                    AsyncResourceLoader.Result<Credential> result) {
-            if (loader.getId() == LOADER_GET_TOKEN) {
-                message.setText(result.success ? result.data.getAccessToken() : "");
-            } else {
-                message.setText("");
-            }
-            if (result.success) {
-                if (loader.getId() == LOADER_GET_TOKEN) {
-                    setButtonText(R.string.delete_token);
-                } else {
-                    setButtonText(R.string.button_login);
-                }
-            } else {
-                setButtonText(R.string.button_login);
+            //message.setText(result.success ? result.data.getAccessToken() : "");
+            //setButtonText(R.string.button_login);
+            getActivity().setProgressBarIndeterminateVisibility(false);
+            button.setEnabled(true);
+            if (! result.success) {
                 //Crouton.makeText(getActivity(), result.errorMessage, Style.ALERT).show();
                 // Toast instead of Crouton dependency
                 Toast.makeText(getActivity(), result.errorMessage, Toast.LENGTH_SHORT).show();
+                return;
             }
-            getActivity().setProgressBarIndeterminateVisibility(false);
-            button.setEnabled(true);
-
-            if (result.success) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra(EXTRA_ACCESS_TOKEN, result.data.getAccessToken());
-                startActivity(intent);
+            String token = result.data.getAccessToken();
+            AuthenticateActivity activity = (AuthenticateActivity) getActivity();
+            if (activity.do_check_token() && ! activity.checkToken(token)) {
+                Toast.makeText(getActivity(), "Token check failed! TODO: Something!",
+                        Toast.LENGTH_SHORT).show();
+                return;
             }
+            if (activity.do_use_cache()) {
+                activity.setCachedAccessToken(token);
+            }
+            activity.startMainActivity(token);
         }
 
         @Override
         public void onLoaderReset(Loader<AsyncResourceLoader.Result<Credential>> loader) {
-            message.setText("");
+            //message.setText("");
             getActivity().setProgressBarIndeterminateVisibility(false);
             button.setEnabled(true);
         }
@@ -236,7 +271,6 @@ public class AuthenticateActivity extends FragmentActivity {
         @Override
         public void onDestroy() {
             getLoaderManager().destroyLoader(LOADER_GET_TOKEN);
-            getLoaderManager().destroyLoader(LOADER_DELETE_TOKEN);
             super.onDestroy();
         }
 
@@ -254,11 +288,17 @@ public class AuthenticateActivity extends FragmentActivity {
                 this.oauth = oauth;
             }
 
+            /**
+             * TODO: Look into passing handler/callback to `oauth.authorizeExplicitly()`
+             * (instead of using this async resource loader stuff)
+             *
+             * @return
+             * @throws Exception
+             */
             @Override
             public Credential loadResourceInBackground() throws Exception {
-                Credential credential =
-                        oauth.authorizeExplicitly(getContext().getString(R.string.token_strava),
-                                null, null).getResult();
+                Credential credential = oauth.authorizeExplicitly(StravaConstants.OAUTH_STORE_ID,
+                        null, null).getResult();
                 LOGGER.info("token: " + credential.getAccessToken());
                 return credential;
             }
@@ -269,35 +309,6 @@ public class AuthenticateActivity extends FragmentActivity {
                 result.success = !TextUtils.isEmpty(data.getAccessToken());
                 result.errorMessage = result.success ? null : "error";
             }
-
         }
-
-        private static class DeleteTokenLoader extends AsyncResourceLoader<Credential> {
-
-            private final OAuthManager oauth;
-            private boolean success;
-
-            public DeleteTokenLoader(Context context, OAuthManager oauth) {
-                super(context);
-                this.oauth = oauth;
-            }
-
-            @Override
-            public Credential loadResourceInBackground() throws Exception {
-                success = oauth.deleteCredential(getContext().getString(R.string.token_strava), null,
-                        null).getResult();
-                LOGGER.info("token deleted: " + success);
-                return null;
-            }
-
-            @Override
-            public void updateErrorStateIfApplicable(Result<Credential> result) {
-                result.success = success;
-                result.errorMessage = result.success ? null : "error";
-            }
-
-        }
-
     }
-
 }
