@@ -1,6 +1,9 @@
 Strava Authenticator for Android (strava-authenticator-android)
 ===============================================================
 
+[![ghit.me](https://ghit.me/badge.svg?repo=loisaidasam/strava-authenticator-android)](https://ghit.me/repo/loisaidasam/strava-authenticator-android)
+
+
 A shell for building Android apps with Strava authentication.
 
 ![https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg](https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg)
