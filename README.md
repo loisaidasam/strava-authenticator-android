@@ -1,4 +1,4 @@
-Strava Authenticator for Android (strava-authenticator-android)
+Strava Authenticator for Android
 ===============================================================
 
 [![ghit.me](https://ghit.me/badge.svg?repo=loisaidasam/strava-authenticator-android)](https://ghit.me/repo/loisaidasam/strava-authenticator-android)
