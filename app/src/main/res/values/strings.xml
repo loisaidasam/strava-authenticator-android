@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Strava Authenticator</string>
+    <string name="app_name">Strava Authenticator Example</string>
 
     <string name="action_settings">Settings</string>
 

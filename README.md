@@ -12,9 +12,7 @@ A shell for building Android apps with Strava authentication.
 Setup
 =====
 
-Create a config file and fill in your Strava `client id` and `client secret`:
-
-    $ cp config.xml.template app/src/main/res/values/config.xml
+In your Android app, create an activity that extends `StravaAuthenticateActivity` and fill in a few of the protected methods, in the very least: `getStravaClientId()`, `getStravaClientSecret()`, and `getStravaActivityIntent()`.
 
 
 Attribution

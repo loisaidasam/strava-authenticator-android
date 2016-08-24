@@ -20,23 +20,85 @@ import android.widget.Toast;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.wuman.android.auth.AuthorizationDialogController;
 import com.wuman.android.auth.AuthorizationFlow;
 import com.wuman.android.auth.DialogFragmentController;
 import com.wuman.android.auth.OAuthManager;
-import com.wuman.android.auth.oauth2.store.SharedPreferencesCredentialStore;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.logging.Logger;
 
-public class AuthenticateActivity extends FragmentActivity {
+public class StravaAuthenticateActivity extends FragmentActivity {
     private static final Logger LOGGER = Logger.getLogger(StravaConstants.TAG);
 
     public static final String EXTRA_ACCESS_TOKEN = "access_token";
+
+    public static final JsonFactory JSON_FACTORY = new JacksonFactory();
+    public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+
+
+    /*****************************************
+     * Methods override START
+     */
+
+    /**
+     * Client ID
+     */
+    protected String getStravaClientId() {
+        return null;
+    }
+
+    /**
+     * Client Secret
+     */
+    protected String getStravaClientSecret() {
+        return null;
+    }
+
+    /**
+     * Scopes to auth for
+     * (default public)
+     */
+    protected Collection<String> getStravaScopes() {
+        return Arrays.asList(StravaScopes.SCOPE_PUBLIC);
+    }
+
+    /**
+     * Should we use the local cache?
+     * (default True)
+     */
+    protected boolean getStravaUseCache() {
+        return true;
+    }
+
+    /**
+     * Should we check a token (against Strava's API) or should we just assume it's good?
+     * (default True)
+     */
+    protected boolean getStravaCheckToken() {
+        return true;
+    }
+
+    /**
+     * What intent should we kick off, given OK auth
+     */
+    protected Intent getStravaActivityIntent() {
+        // Example: return new Intent(this, ExampleMainActivity.class);
+        return null;
+    }
+
+    /**
+     * Methods override END
+     ****************************************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,27 +118,21 @@ public class AuthenticateActivity extends FragmentActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        //Crouton.cancelAllCroutons();
-        super.onDestroy();
-    }
-
     /**
-     * Lookup cached token if necessary, check it if necessary, start MainActivity if all good.
-     * Return whether MainActivity started
+     * Lookup cached token if necessary, check it if necessary, start activity if all good.
+     * Return whether activity started.
      *
      * @return
      */
-    private boolean handleCachedToken() {
-        if (! do_use_cache()) {
+    protected boolean handleCachedToken() {
+        if (! getStravaUseCache()) {
             return false;
         }
         String token = getCachedAccessToken();
         if (token == null) {
             return false;
         }
-        if (do_check_token() && ! checkToken(token)) {
+        if (getStravaCheckToken() && ! checkToken(token)) {
             Toast.makeText(this, "Invalid token! TODO: Something!", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -84,28 +140,12 @@ public class AuthenticateActivity extends FragmentActivity {
         return true;
     }
 
-    /**
-     * Should we use the local cache?
-     * @return
-     */
-    private boolean do_use_cache() {
-        return Boolean.valueOf(getString(R.string.strava_auth_use_cache));
-    }
-
-    /**
-     * Should we check a token (against Strava's API) or should we just assume it's good?
-     * @return
-     */
-    private boolean do_check_token() {
-        return Boolean.valueOf(getString(R.string.strava_auth_check_token));
-    }
-
-    private String getCachedAccessToken() {
+    protected String getCachedAccessToken() {
         SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
         return preferences.getString(StravaConstants.PREFS_KEY_ACCESS_TOKEN, null);
     }
 
-    private void setCachedAccessToken(String token) {
+    protected void setCachedAccessToken(String token) {
         SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(StravaConstants.PREFS_KEY_ACCESS_TOKEN, token);
@@ -118,15 +158,21 @@ public class AuthenticateActivity extends FragmentActivity {
      * @param token
      * @return
      */
-    private boolean checkToken(String token) {
+    protected boolean checkToken(String token) {
         // TODO: Implement this!
         return true;
     }
 
-    private void startMainActivity(String token) {
-        Intent intent = new Intent(this, MainActivity.class);
+    protected void startMainActivity(String token) {
+        Intent intent = getStravaActivityIntent();
+        if (intent == null) {
+            Toast.makeText(this, "getStravaActivityIntent() returned null! TODO: Something!",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         intent.putExtra(EXTRA_ACCESS_TOKEN, token);
         startActivity(intent);
+        // TODO: finish()?
         finish();
     }
 
@@ -138,7 +184,6 @@ public class AuthenticateActivity extends FragmentActivity {
         private OAuthManager oauth;
 
         private Button button;
-        //private TextView message;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -155,7 +200,6 @@ public class AuthenticateActivity extends FragmentActivity {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             button = (Button) view.findViewById(android.R.id.button1);
             setButtonText(R.string.button_login);
-            //message = (TextView) view.findViewById(android.R.id.text1);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -177,23 +221,29 @@ public class AuthenticateActivity extends FragmentActivity {
 
         private void setupOauth() {
             boolean fullScreen = true;
-            String clientId = getString(R.string.strava_client_id);
-            String clientSecret = getString(R.string.strava_client_secret);
-            // setup credential store
-            SharedPreferencesCredentialStore credentialStore =
-                    new SharedPreferencesCredentialStore(getActivity(),
-                            StravaConstants.CREDENTIALS_STORE_PREF_FILE, OAuth.JSON_FACTORY);
+            StravaAuthenticateActivity activity = (StravaAuthenticateActivity) getActivity();
+            String clientId = activity.getStravaClientId();
+            if (clientId == null) {
+                Toast.makeText(activity, "clientId is null! TODO: Something!",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String clientSecret = activity.getStravaClientSecret();
+            if (clientSecret == null) {
+                Toast.makeText(activity, "clientSecret is null! TODO: Something!",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
             // setup authorization flow
             AuthorizationFlow flow = new AuthorizationFlow.Builder(
                     BearerToken.queryParameterAccessMethod(),
-                    OAuth.HTTP_TRANSPORT,
-                    OAuth.JSON_FACTORY,
+                    activity.HTTP_TRANSPORT,
+                    activity.JSON_FACTORY,
                     new GenericUrl(StravaConstants.URL_TOKEN),
                     new ClientParametersAuthentication(clientId, clientSecret),
                     clientId,
                     StravaConstants.URL_AUTHORIZE)
-                    .setScopes(Arrays.asList(StravaScopes.SCOPE_PUBLIC))
-                    .setCredentialStore(credentialStore)
+                    .setScopes(activity.getStravaScopes())
                     .setRequestInitializer(new HttpRequestInitializer() {
                         @Override
                         public void initialize(HttpRequest request) throws IOException {}
@@ -231,31 +281,26 @@ public class AuthenticateActivity extends FragmentActivity {
         public Loader<AsyncResourceLoader.Result<Credential>> onCreateLoader(int id, Bundle args) {
             getActivity().setProgressBarIndeterminateVisibility(true);
             button.setEnabled(false);
-            //message.setText("");
             return new GetTokenLoader(getActivity(), oauth);
         }
 
         @Override
         public void onLoadFinished(Loader<AsyncResourceLoader.Result<Credential>> loader,
                                    AsyncResourceLoader.Result<Credential> result) {
-            //message.setText(result.success ? result.data.getAccessToken() : "");
-            //setButtonText(R.string.button_login);
             getActivity().setProgressBarIndeterminateVisibility(false);
             button.setEnabled(true);
             if (! result.success) {
-                //Crouton.makeText(getActivity(), result.errorMessage, Style.ALERT).show();
-                // Toast instead of Crouton dependency
                 Toast.makeText(getActivity(), result.errorMessage, Toast.LENGTH_SHORT).show();
                 return;
             }
             String token = result.data.getAccessToken();
-            AuthenticateActivity activity = (AuthenticateActivity) getActivity();
-            if (activity.do_check_token() && ! activity.checkToken(token)) {
+            StravaAuthenticateActivity activity = (StravaAuthenticateActivity) getActivity();
+            if (activity.getStravaCheckToken() && ! activity.checkToken(token)) {
                 Toast.makeText(getActivity(), "Token check failed! TODO: Something!",
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (activity.do_use_cache()) {
+            if (activity.getStravaUseCache()) {
                 activity.setCachedAccessToken(token);
             }
             activity.startMainActivity(token);
@@ -263,7 +308,6 @@ public class AuthenticateActivity extends FragmentActivity {
 
         @Override
         public void onLoaderReset(Loader<AsyncResourceLoader.Result<Credential>> loader) {
-            //message.setText("");
             getActivity().setProgressBarIndeterminateVisibility(false);
             button.setEnabled(true);
         }
