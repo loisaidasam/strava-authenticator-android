@@ -12,7 +12,9 @@ A shell for building Android apps with Strava authentication.
 Setup
 =====
 
-In your Android app, create an activity that extends `StravaAuthenticateActivity` and fill in a few of the protected methods, in the very least: `getStravaClientId()`, `getStravaClientSecret()`, and `getStravaActivityIntent()`.
+In your Android app, create an activity that extends [StravaAuthenticateActivity](https://github.com/loisaidasam/strava-authenticator-android/blob/master/stravaauthenticator/src/main/java/com/samsandberg/stravaauthenticator/StravaAuthenticateActivity.java), and override a few of the protected methods, in the very least: `getStravaClientId()`, `getStravaClientSecret()`, and `getStravaActivityIntent()`.
+
+Included is an example app with an [ExampleAuthActivity](https://github.com/loisaidasam/strava-authenticator-android/blob/master/example/src/main/java/com/samsandberg/stravaauthenticatorexample/ExampleAuthActivity.java) that redirects to [ExampleMainActivity](https://github.com/loisaidasam/strava-authenticator-android/blob/master/example/src/main/java/com/samsandberg/stravaauthenticatorexample/ExampleMainActivity.java) on successful auth.
 
 
 Attribution
