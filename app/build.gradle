@@ -1,9 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "21.1.2"
-
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
     // API levels:
     // http://developer.android.com/guide/topics/manifest/uses-sdk-element.html
     defaultConfig {
@@ -11,7 +10,7 @@ android {
         // Gingerbread
         minSdkVersion 9
         // Lollipop MR1
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0.0"
     }
@@ -20,6 +19,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 
