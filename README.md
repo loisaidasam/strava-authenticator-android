@@ -18,7 +18,7 @@ In your Android app, create an activity that extends `StravaAuthenticateActivity
 Attribution
 ===========
 
-Some code copied/modified from Android OAuth Client Library (android-oauth-client)
+Some boilerplate OAuth code used from Android OAuth Client Library (android-oauth-client)
 
 https://github.com/wuman/android-oauth-client
 
