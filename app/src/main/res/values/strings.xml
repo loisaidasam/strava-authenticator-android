@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Strava Authenticator Example</string>
 
-    <string name="action_settings">Settings</string>
+    <!-- <string name="action_settings">Settings</string> -->
 
     <string name="button_login">Login with Strava</string>
 </resources>

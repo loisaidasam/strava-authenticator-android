@@ -36,15 +36,15 @@ public class ExampleAuthActivity extends StravaAuthenticateActivity {
 
     /**
      * Should we use the local cache?
-     * (default True)
+     * (default true)
      */
     protected boolean getStravaUseCache() {
-        return false;
+        return true;
     }
 
     /**
      * Should we check a token (against Strava's API) or should we just assume it's good?
-     * (default True)
+     * (default true)
      */
     protected boolean getStravaCheckToken() {
         return true;
@@ -55,6 +55,14 @@ public class ExampleAuthActivity extends StravaAuthenticateActivity {
      */
     protected Intent getStravaActivityIntent() {
         return new Intent(this, ExampleMainActivity.class);
+    }
+
+    /**
+     * Should we finish this activity after successful auth + kicking off next activity?
+     * (default true)
+     */
+    protected boolean getStravaFinishOnComplete() {
+        return true;
     }
 
     /**

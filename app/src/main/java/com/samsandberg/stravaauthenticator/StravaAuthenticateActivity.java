@@ -3,12 +3,11 @@ package com.samsandberg.stravaauthenticator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,13 +37,6 @@ import java.util.Collection;
 import java.util.logging.Logger;
 
 public class StravaAuthenticateActivity extends FragmentActivity {
-    private static final Logger LOGGER = Logger.getLogger(StravaConstants.TAG);
-
-    public static final String EXTRA_ACCESS_TOKEN = "access_token";
-
-    public static final JsonFactory JSON_FACTORY = new JacksonFactory();
-    public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-
 
     /*****************************************
      * Methods override START
@@ -74,7 +66,7 @@ public class StravaAuthenticateActivity extends FragmentActivity {
 
     /**
      * Should we use the local cache?
-     * (default True)
+     * (default true)
      */
     protected boolean getStravaUseCache() {
         return true;
@@ -82,7 +74,7 @@ public class StravaAuthenticateActivity extends FragmentActivity {
 
     /**
      * Should we check a token (against Strava's API) or should we just assume it's good?
-     * (default True)
+     * (default true)
      */
     protected boolean getStravaCheckToken() {
         return true;
@@ -97,18 +89,30 @@ public class StravaAuthenticateActivity extends FragmentActivity {
     }
 
     /**
+     * Should we finish this activity after successful auth + kicking off next activity?
+     * (default true)
+     */
+    protected boolean getStravaFinishOnComplete() {
+        return true;
+    }
+
+    /**
      * Methods override END
      ****************************************/
+
+
+    private static final Logger LOGGER = Logger.getLogger(StravaConstants.TAG);
+
+    public static final String EXTRA_ACCESS_TOKEN = "access_token";
+
+    public static final JsonFactory JSON_FACTORY = new JacksonFactory();
+    public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-
-        if (handleCachedToken()) {
-            // If cached token handled, exit early
-            return;
-        }
 
         FragmentManager fm = getSupportFragmentManager();
 
@@ -116,6 +120,8 @@ public class StravaAuthenticateActivity extends FragmentActivity {
             OAuthFragment fragment = new OAuthFragment();
             fm.beginTransaction().add(android.R.id.content, fragment).commit();
         }
+
+        handleCachedToken();
     }
 
     /**
@@ -132,10 +138,11 @@ public class StravaAuthenticateActivity extends FragmentActivity {
         if (token == null) {
             return false;
         }
-        if (getStravaCheckToken() && ! checkToken(token)) {
-            Toast.makeText(this, "Invalid token! TODO: Something!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        // TODO: Make a CheckTokenTask
+//        if (getStravaCheckToken() && ! checkToken(token)) {
+//            Toast.makeText(this, "Invalid token! TODO: Something!", Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
         startMainActivity(token);
         return true;
     }
@@ -152,17 +159,6 @@ public class StravaAuthenticateActivity extends FragmentActivity {
         editor.commit();
     }
 
-    /**
-     * Actually check access token - maybe call some strava method with it?
-     *
-     * @param token
-     * @return
-     */
-    protected boolean checkToken(String token) {
-        // TODO: Implement this!
-        return true;
-    }
-
     protected void startMainActivity(String token) {
         Intent intent = getStravaActivityIntent();
         if (intent == null) {
@@ -172,14 +168,12 @@ public class StravaAuthenticateActivity extends FragmentActivity {
         }
         intent.putExtra(EXTRA_ACCESS_TOKEN, token);
         startActivity(intent);
-        // TODO: finish()?
-        finish();
+        if (getStravaFinishOnComplete()) {
+            finish();
+        }
     }
 
-    public static class OAuthFragment extends Fragment implements
-            LoaderManager.LoaderCallbacks<AsyncResourceLoader.Result<Credential>> {
-
-        private static final int LOADER_GET_TOKEN = 0;
+    public static class OAuthFragment extends Fragment {
 
         private OAuthManager oauth;
 
@@ -193,22 +187,19 @@ public class StravaAuthenticateActivity extends FragmentActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.oauth_login, container, false);
+            return inflater.inflate(R.layout.activity_auth, container, false);
         }
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             button = (Button) view.findViewById(android.R.id.button1);
-            setButtonText(R.string.button_login);
+            button.setText(R.string.button_login);
+            button.setTag(R.string.button_login);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (getLoaderManager().getLoader(LOADER_GET_TOKEN) == null) {
-                        getLoaderManager().initLoader(LOADER_GET_TOKEN, null, OAuthFragment.this);
-                    } else {
-                        getLoaderManager().restartLoader(LOADER_GET_TOKEN, null,
-                                OAuthFragment.this);
-                    }
+                    StravaAuthenticateActivity activity = (StravaAuthenticateActivity) getActivity();
+                    new AuthTask(activity.getStravaCheckToken()).execute();
                 }
             });
         }
@@ -277,81 +268,93 @@ public class StravaAuthenticateActivity extends FragmentActivity {
             oauth = new OAuthManager(flow, controller);
         }
 
-        @Override
-        public Loader<AsyncResourceLoader.Result<Credential>> onCreateLoader(int id, Bundle args) {
-            getActivity().setProgressBarIndeterminateVisibility(true);
-            button.setEnabled(false);
-            return new GetTokenLoader(getActivity(), oauth);
-        }
+        /**
+         * Simple result envelope class for AuthTask
+         */
+        private class AuthResult {
+            public Credential credential;
+            public String errorMessage;
+            public boolean success;
 
-        @Override
-        public void onLoadFinished(Loader<AsyncResourceLoader.Result<Credential>> loader,
-                                   AsyncResourceLoader.Result<Credential> result) {
-            getActivity().setProgressBarIndeterminateVisibility(false);
-            button.setEnabled(true);
-            if (! result.success) {
-                Toast.makeText(getActivity(), result.errorMessage, Toast.LENGTH_SHORT).show();
-                return;
+            public AuthResult(Credential credential) {
+                this.credential = credential;
+                success = true;
             }
-            String token = result.data.getAccessToken();
-            StravaAuthenticateActivity activity = (StravaAuthenticateActivity) getActivity();
-            if (activity.getStravaCheckToken() && ! activity.checkToken(token)) {
-                Toast.makeText(getActivity(), "Token check failed! TODO: Something!",
-                        Toast.LENGTH_SHORT).show();
-                return;
+
+            public AuthResult(String errorMessage) {
+                this.errorMessage = errorMessage;
+                success = false;
             }
-            if (activity.getStravaUseCache()) {
-                activity.setCachedAccessToken(token);
-            }
-            activity.startMainActivity(token);
         }
 
-        @Override
-        public void onLoaderReset(Loader<AsyncResourceLoader.Result<Credential>> loader) {
-            getActivity().setProgressBarIndeterminateVisibility(false);
-            button.setEnabled(true);
-        }
+        private class AuthTask extends AsyncTask<Void, Void, AuthResult> {
 
-        @Override
-        public void onDestroy() {
-            getLoaderManager().destroyLoader(LOADER_GET_TOKEN);
-            super.onDestroy();
-        }
+            private boolean stravaCheckToken;
 
-        private void setButtonText(int action) {
-            button.setText(action);
-            button.setTag(action);
-        }
-
-        private static class GetTokenLoader extends AsyncResourceLoader<Credential> {
-
-            private final OAuthManager oauth;
-
-            public GetTokenLoader(Context context, OAuthManager oauth) {
-                super(context);
-                this.oauth = oauth;
+            public AuthTask(boolean stravaCheckToken) {
+                this.stravaCheckToken = stravaCheckToken;
             }
 
             /**
-             * TODO: Look into passing handler/callback to `oauth.authorizeExplicitly()`
-             * (instead of using this async resource loader stuff)
-             *
-             * @return
-             * @throws Exception
+             * UI ish
              */
-            @Override
-            public Credential loadResourceInBackground() throws Exception {
-                Credential credential = oauth.authorizeExplicitly(StravaConstants.OAUTH_STORE_ID,
-                        null, null).getResult();
-                LOGGER.info("token: " + credential.getAccessToken());
-                return credential;
+            protected void onPreExecute () {
+                getActivity().setProgressBarIndeterminateVisibility(true);
+                button.setEnabled(false);
             }
 
-            @Override
-            public void updateErrorStateIfApplicable(AsyncResourceLoader.Result<Credential> result) {
-                Credential data = result.data;
-                result.success = !TextUtils.isEmpty(data.getAccessToken());
-                result.errorMessage = result.success ? null : "error";
+            /**
+             * Actually check access token - maybe call some Strava method with it?
+             *
+             * @param token
+             * @return
+             */
+            protected boolean checkToken(String token) {
+                // TODO: Implement this!
+                return true;
+            }
+
+            /**
+             * Background work (not on UI thread)
+             */
+            protected AuthResult doInBackground(Void... params) {
+                Credential credential;
+                try {
+                    credential = oauth.authorizeExplicitly(StravaConstants.OAUTH_STORE_ID, null,
+                            null).getResult();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    LOGGER.severe("Auth failed!");
+                    return new AuthResult("Auth failed! TODO: Something! " + e.getMessage());
+                }
+                String token = credential.getAccessToken();
+                LOGGER.info("token: " + token);
+                if (TextUtils.isEmpty(token)) {
+                    return new AuthResult("Auth failed, token is empty! TODO: Something!");
+                }
+                if (stravaCheckToken && ! checkToken(token)) {
+                    return new AuthResult("Token check failed! TODO: Something!");
+                }
+                return new AuthResult(credential);
+            }
+
+            /**
+             * UI ish
+             */
+            protected void onPostExecute(AuthResult result) {
+                getActivity().setProgressBarIndeterminateVisibility(false);
+                button.setEnabled(true);
+                StravaAuthenticateActivity activity = (StravaAuthenticateActivity) getActivity();
+                if (result.success) {
+                    String token = result.credential.getAccessToken();
+                    if (activity.getStravaUseCache()) {
+                        activity.setCachedAccessToken(token);
+                    }
+                    activity.startMainActivity(token);
+                } else {
+                    Toast.makeText(activity, "Error during auth: " + result.errorMessage,
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

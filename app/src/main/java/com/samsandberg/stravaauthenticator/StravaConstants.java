@@ -10,8 +10,6 @@ package com.samsandberg.stravaauthenticator;
 public class StravaConstants {
     public static final String TAG = "StravaAuthenticator";
 
-    public static final String CREDENTIALS_STORE_PREF_FILE = "oauth";
-
     public static final String URL_AUTHORIZE = "https://www.strava.com/oauth/authorize";
     public static final String URL_TOKEN = "https://www.strava.com/oauth/token";
     public static final String URL_REDIRECT = "http://localhost/Callback";
