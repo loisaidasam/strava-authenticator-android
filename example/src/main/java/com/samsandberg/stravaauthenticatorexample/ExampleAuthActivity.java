@@ -1,6 +1,9 @@
-package com.samsandberg.stravaauthenticator;
+package com.samsandberg.stravaauthenticatorexample;
 
 import android.content.Intent;
+
+import com.samsandberg.stravaauthenticator.StravaAuthenticateActivity;
+import com.samsandberg.stravaauthenticator.StravaScopes;
 
 import java.util.Arrays;
 import java.util.Collection;

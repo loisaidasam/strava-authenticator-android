@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.samsandberg.stravaauthenticator">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    package="com.samsandberg.stravaauthenticatorexample">
 
     <application
         android:icon="@mipmap/logo"
@@ -11,7 +8,7 @@
         android:theme="@style/AppTheme">
         <!-- TODO: Figure out why ExampleAuthActivity has no label, even though it's set -->
         <activity
-            android:name=".ExampleAuthActivity"
+            android:name="com.samsandberg.stravaauthenticatorexample.ExampleAuthActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +16,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ExampleMainActivity"
+            android:name="com.samsandberg.stravaauthenticatorexample.ExampleMainActivity"
             android:label="@string/app_name">
         </activity>
     </application>
