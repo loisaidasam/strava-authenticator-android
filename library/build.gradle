@@ -1,5 +1,29 @@
 apply plugin: 'com.android.library'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'strava-authenticator-android'
+
+    publishedGroupId = 'com.samsandberg.stravaauthenticator'
+    libraryName = 'StravaAuthenticator'
+    artifact = 'strava-authenticator-android'
+
+    libraryDescription = 'A shell for building Android apps with Strava authentication.'
+
+    siteUrl = 'https://github.com/loisaidasam/strava-authenticator-android'
+    gitUrl = 'https://github.com/loisaidasam/strava-authenticator-android.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'loisaidasam'
+    developerName = 'Sam Sandberg'
+    developerEmail = 'sam.sandberg@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     // API levels:
     // http://developer.android.com/guide/topics/manifest/uses-sdk-element.html
@@ -35,3 +59,6 @@ dependencies {
     compile 'com.wu-man:android-oauth-client:0.4.5@aar'
     // testCompile 'junit:junit:4.12'
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
