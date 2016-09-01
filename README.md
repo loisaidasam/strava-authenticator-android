@@ -1,7 +1,7 @@
 Strava Authenticator for Android
 ===============================================================
 
-[![ghit.me](https://ghit.me/badge.svg?repo=loisaidasam/strava-authenticator-android)](https://ghit.me/repo/loisaidasam/strava-authenticator-android)
+[ ![Download](https://api.bintray.com/packages/loisaidasam/maven/strava-authenticator-android/images/download.svg) ](https://bintray.com/loisaidasam/maven/strava-authenticator-android/_latestVersion) [![ghit.me](https://ghit.me/badge.svg?repo=loisaidasam/strava-authenticator-android)](https://ghit.me/repo/loisaidasam/strava-authenticator-android)
 
 
 A shell for building Android apps with Strava authentication.
