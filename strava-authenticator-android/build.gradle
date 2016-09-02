@@ -57,7 +57,7 @@ dependencies {
     compile 'com.google.http-client:google-http-client-android:1.20.0'
     compile 'com.google.http-client:google-http-client-jackson:1.20.0'
     compile 'com.wu-man:android-oauth-client:0.4.5@aar'
-    // testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 }
 
 apply from: 'https://raw.githubusercontent.com/loisaidasam/JCenter/master/installv1.gradle'
