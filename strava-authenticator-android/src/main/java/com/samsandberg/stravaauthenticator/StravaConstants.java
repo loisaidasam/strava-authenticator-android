@@ -14,6 +14,7 @@ public class StravaConstants {
     public static final String URL_TOKEN = "https://www.strava.com/oauth/token";
     public static final String URL_REDIRECT = "http://localhost/Callback";
 
+    public static final String PREFS_NAME = "strava_authenticator";
     public static final String PREFS_KEY_ACCESS_TOKEN = "strava_authenticator_access_token";
 
     public static final String OAUTH_STORE_ID = "token_strava";

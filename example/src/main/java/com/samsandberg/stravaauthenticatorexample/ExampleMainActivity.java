@@ -1,6 +1,5 @@
 package com.samsandberg.stravaauthenticatorexample;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
@@ -17,8 +16,7 @@ public class ExampleMainActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.tv_access_token);
 
         // Here's how you get the access token passed to the view:
-        Intent intent = getIntent();
-        String accessToken = intent.getStringExtra(StravaAuthenticateActivity.EXTRA_ACCESS_TOKEN);
+        String accessToken = StravaAuthenticateActivity.getStravaAccessToken(this);
         String text = "Access Token:\n\n" + accessToken;
         tv.setText(text);
     }

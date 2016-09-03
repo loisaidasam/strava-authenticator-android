@@ -103,8 +103,6 @@ public class StravaAuthenticateActivity extends FragmentActivity {
 
     private static final Logger LOGGER = Logger.getLogger(StravaConstants.TAG);
 
-    public static final String EXTRA_ACCESS_TOKEN = "access_token";
-
     public static final JsonFactory JSON_FACTORY = new JacksonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
 
@@ -124,6 +122,12 @@ public class StravaAuthenticateActivity extends FragmentActivity {
         handleCachedToken();
     }
 
+    public static String getStravaAccessToken(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(StravaConstants.PREFS_NAME,
+                Context.MODE_PRIVATE);
+        return preferences.getString(StravaConstants.PREFS_KEY_ACCESS_TOKEN, null);
+    }
+
     /**
      * Lookup cached token if necessary, check it if necessary, start activity if all good.
      * Return whether activity started.
@@ -134,7 +138,7 @@ public class StravaAuthenticateActivity extends FragmentActivity {
         if (! getStravaUseCache()) {
             return false;
         }
-        String token = getCachedAccessToken();
+        String token = getStravaAccessToken(this);
         if (token == null) {
             return false;
         }
@@ -147,13 +151,9 @@ public class StravaAuthenticateActivity extends FragmentActivity {
         return true;
     }
 
-    protected String getCachedAccessToken() {
-        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
-        return preferences.getString(StravaConstants.PREFS_KEY_ACCESS_TOKEN, null);
-    }
-
-    protected void setCachedAccessToken(String token) {
-        SharedPreferences preferences = getPreferences(Context.MODE_PRIVATE);
+    protected void setStravaAccessToken(String token) {
+        SharedPreferences preferences = getSharedPreferences(StravaConstants.PREFS_NAME,
+                Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(StravaConstants.PREFS_KEY_ACCESS_TOKEN, token);
         editor.commit();
@@ -166,7 +166,6 @@ public class StravaAuthenticateActivity extends FragmentActivity {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        intent.putExtra(EXTRA_ACCESS_TOKEN, token);
         startActivity(intent);
         if (getStravaFinishOnComplete()) {
             finish();
@@ -347,9 +346,7 @@ public class StravaAuthenticateActivity extends FragmentActivity {
                 StravaAuthenticateActivity activity = (StravaAuthenticateActivity) getActivity();
                 if (result.success) {
                     String token = result.credential.getAccessToken();
-                    if (activity.getStravaUseCache()) {
-                        activity.setCachedAccessToken(token);
-                    }
+                    activity.setStravaAccessToken(token);
                     activity.startMainActivity(token);
                 } else {
                     Toast.makeText(activity, "Error during auth: " + result.errorMessage,
