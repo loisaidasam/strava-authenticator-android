@@ -1,13 +1,42 @@
 Strava Authenticator for Android
 ===============================================================
 
-[ ![Download](https://api.bintray.com/packages/loisaidasam/maven/strava-authenticator-android/images/download.svg) ](https://bintray.com/loisaidasam/maven/strava-authenticator-android/_latestVersion) [![ghit.me](https://ghit.me/badge.svg?repo=loisaidasam/strava-authenticator-android)](https://ghit.me/repo/loisaidasam/strava-authenticator-android)
+[![ghit.me](https://ghit.me/badge.svg?repo=loisaidasam/strava-authenticator-android)](https://ghit.me/repo/loisaidasam/strava-authenticator-android)
 
 
 A shell for building Android apps with Strava authentication.
 
 ![https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg](https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg)
 
+Installation
+============
+
+[ ![Download](https://api.bintray.com/packages/loisaidasam/maven/strava-authenticator-android/images/download.svg) ](https://bintray.com/loisaidasam/maven/strava-authenticator-android/_latestVersion)
+
+Available via `jcenter()`:
+
+Gradle:
+
+Add the following to your Android application's `build.gradle` file:
+
+```gradle
+dependencies {
+  compile 'com.samsandberg.stravaauthenticator:strava-authenticator-android:1.0.0'
+}
+```
+
+OR
+
+Maven:
+
+```maven
+<dependency>
+  <groupId>com.samsandberg.stravaauthenticator</groupId>
+  <artifactId>strava-authenticator-android</artifactId>
+  <version>1.0.0</version>
+  <type>pom</type>
+</dependency>
+```
 
 Setup
 =====
