@@ -21,7 +21,7 @@ Add the following to your Android application's `build.gradle` file:
 
 ```gradle
 dependencies {
-  compile 'com.samsandberg.stravaauthenticator:strava-authenticator-android:1.0.0'
+  compile 'com.samsandberg.stravaauthenticator:strava-authenticator-android:1.1.0'
 }
 ```
 
@@ -33,7 +33,7 @@ Maven:
 <dependency>
   <groupId>com.samsandberg.stravaauthenticator</groupId>
   <artifactId>strava-authenticator-android</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <type>pom</type>
 </dependency>
 ```
