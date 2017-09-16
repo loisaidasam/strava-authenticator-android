@@ -6,6 +6,10 @@ Strava Authenticator for Android
 
 A shell for building Android apps with Strava authentication.
 
+ExampleAuthActivity        |  ExampleMainActivity
+:-------------------------:|:-------------------------:
+![screenshot_1505585061](https://user-images.githubusercontent.com/213281/30514722-bab3ab4c-9ae8-11e7-9888-5b95347cdf43.png)  |  ![screenshot_1505585082](https://user-images.githubusercontent.com/213281/30514724-bdfc0be6-9ae8-11e7-806e-8cbca6a49e73.png)
+
 Installation
 ============
 
