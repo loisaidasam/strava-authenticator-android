@@ -6,8 +6,6 @@ Strava Authenticator for Android
 
 A shell for building Android apps with Strava authentication.
 
-![https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg](https://raw.githubusercontent.com/loisaidasam/strava-authenticator-android/master/assets/logo.jpg)
-
 Installation
 ============
 
@@ -21,7 +19,7 @@ Add the following to your Android application's `build.gradle` file:
 
 ```gradle
 dependencies {
-  compile 'com.samsandberg.stravaauthenticator:strava-authenticator-android:1.1.0'
+  compile 'com.samsandberg.stravaauthenticator:strava-authenticator-android:2.0.0'
 }
 ```
 
@@ -33,7 +31,7 @@ Maven:
 <dependency>
   <groupId>com.samsandberg.stravaauthenticator</groupId>
   <artifactId>strava-authenticator-android</artifactId>
-  <version>1.1.0</version>
+  <version>2.0.0</version>
   <type>pom</type>
 </dependency>
 ```
