@@ -1,5 +1,3 @@
 <resources>
     <!-- <string name="app_name">Strava Authenticator</string> -->
-
-    <string name="button_login">Login with Strava</string>
 </resources>

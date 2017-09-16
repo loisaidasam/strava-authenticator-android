@@ -69,12 +69,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-Logo
-====
-
-By Source (WP:NFCC#4), Fair use, https://en.wikipedia.org/w/index.php?curid=48247714
-
-
 Resources
 =========
 
@@ -82,3 +76,7 @@ Resources
 - [http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client"](http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client")
 - [http://strava.github.io/api/v3/oauth/](http://strava.github.io/api/v3/oauth/)
 - [https://www.strava.com/settings/api](https://www.strava.com/settings/api)
+- [https://developers.strava.com/](https://developers.strava.com/)
+- [https://www.strava.com/legal/api](https://www.strava.com/legal/api)
+- [https://developers.strava.com/guidelines/](https://developers.strava.com/guidelines/)
+

@@ -3,14 +3,14 @@ apply plugin: 'com.android.application'
 android {
     // API levels:
     // http://developer.android.com/guide/topics/manifest/uses-sdk-element.html
-    compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
-        // Gingerbread
-        minSdkVersion 9
-        // Nougat
-        targetSdkVersion 24
+        // Ice Cream Sandwich 4.0.1 - 4.0.2
+        minSdkVersion 14
+        // Oreo 8.0.0
+        targetSdkVersion 26
         versionCode 1
         versionName "1.1.0"
     }
@@ -26,9 +26,12 @@ android {
 
 dependencies {
     // Example remote compile:
-    compile 'com.samsandberg.stravaauthenticator:strava-authenticator-android:1.1.0'
+    //compile 'com.samsandberg.stravaauthenticator:strava-authenticator-android:2.0.0'
+
     // Local compile (since it's in this project):
-    //compile project(':strava-authenticator-android')
+    compile project(':strava-authenticator-android')
+
+    // Other
     // compile 'com.android.support:appcompat-v7:24.2.0'
     // testCompile 'junit:junit:4.12'
 }

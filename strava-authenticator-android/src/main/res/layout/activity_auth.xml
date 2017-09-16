@@ -9,11 +9,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.samsandberg.stravaauthenticator.StravaAuthenticateActivity">
 
-    <Button
-        android:id="@android:id/button1"
+    <!-- Mandatory "Connect with Strava" button -->
+    <!-- via https://developers.strava.com/guidelines/ -->
+    <ImageButton
+        android:id="@+id/btn_strava_connectwith"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/button_login" />
+        android:src="@drawable/btn_strava_connectwith_orange"
+        android:background="@android:color/transparent" />
 
 </RelativeLayout>

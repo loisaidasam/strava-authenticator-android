@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/loisaidasam/strava-authenticator-android'
     gitUrl = 'https://github.com/loisaidasam/strava-authenticator-android.git'
 
-    libraryVersion = '1.1.0'
+    libraryVersion = '2.0.0'
 
     developerId = 'loisaidasam'
     developerName = 'Sam Sandberg'
@@ -27,15 +27,16 @@ ext {
 android {
     // API levels:
     // http://developer.android.com/guide/topics/manifest/uses-sdk-element.html
-    compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
 
     defaultConfig {
-        // Gingerbread
-        minSdkVersion 9
-        // Nougat
-        targetSdkVersion 24
-        versionCode 1
+        // https://source.android.com/source/build-numbers
+        // Ice Cream Sandwich 4.0.1 - 4.0.2
+        minSdkVersion 14
+        // Oreo 8.0.0
+        targetSdkVersion 26
+        versionCode 2
         versionName libraryVersion
     }
 
@@ -52,7 +53,7 @@ android {
 
 dependencies {
     // compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
     compile 'com.google.api-client:google-api-client:1.20.0'
     compile 'com.google.http-client:google-http-client-android:1.20.0'
     compile 'com.google.http-client:google-http-client-jackson:1.20.0'

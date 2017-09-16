@@ -16,4 +16,12 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
+    <!-- Mandatory "Powered by Strava" attribution -->
+    <!-- via https://developers.strava.com/guidelines/ -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/api_logo_pwrdby_strava_stack_light"
+        android:layout_alignParentBottom="true" />
+
 </RelativeLayout>

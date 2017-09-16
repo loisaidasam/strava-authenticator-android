@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.api.client.auth.oauth2.BearerToken;
@@ -176,7 +176,7 @@ public class StravaAuthenticateActivity extends FragmentActivity {
 
         private OAuthManager oauth;
 
-        private Button button;
+        private ImageButton button;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -191,9 +191,7 @@ public class StravaAuthenticateActivity extends FragmentActivity {
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
-            button = (Button) view.findViewById(android.R.id.button1);
-            button.setText(R.string.button_login);
-            button.setTag(R.string.button_login);
+            button = (ImageButton) view.findViewById(R.id.btn_strava_connectwith);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
