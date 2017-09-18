@@ -75,7 +75,7 @@ Resources
 =========
 
 - [https://github.com/wuman/android-oauth-client](https://github.com/wuman/android-oauth-client)
-- [http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client"](http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client")
+- [http://search.maven.org/#search|gav|1|g:"com.wu-man" AND a:"android-oauth-client"](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.wu-man%22%20AND%20a%3A%22android-oauth-client%22)
 - [http://strava.github.io/api/v3/oauth/](http://strava.github.io/api/v3/oauth/)
 - [https://www.strava.com/settings/api](https://www.strava.com/settings/api)
 - [https://developers.strava.com/](https://developers.strava.com/)
